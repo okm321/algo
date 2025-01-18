@@ -1,4 +1,4 @@
-package main
+package _389
 
 import (
 	"bufio"
@@ -10,12 +10,6 @@ import (
 
 var r = bufio.NewReader(os.Stdin)
 var w = bufio.NewWriter(os.Stdout)
-
-func main() {
-	defer w.Flush()
-
-	// fmt.Fprintln(w, X)
-}
 
 // readInt 単一の整数を読み取る関数
 func readInt(reader *bufio.Reader) int {
