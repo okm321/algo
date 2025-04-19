@@ -16,6 +16,37 @@ var (
 
 func main() {
 	defer w.Flush()
+
+	H, W := read2Ints(r)
+
+	A := readGrid(r, H)
+	B := readGrid(r, H)
+
+	for s := 0; s < H; s++ {
+		for t := 0; t < W; t++ {
+			ok := true
+			for i := 0; i < H; i++ {
+				for j := 0; j < W; j++ {
+					// シフト後の位置を計算
+					ai := (i - s + H) % H
+					aj := (j - t + W) % W
+					if A[ai][aj] != B[i][j] {
+						ok = false
+						break
+					}
+				}
+				if !ok {
+					break
+				}
+			}
+			if ok {
+				fmt.Fprintln(w, "Yes")
+				return
+			}
+		}
+	}
+
+	fmt.Fprintln(w, "No")
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────

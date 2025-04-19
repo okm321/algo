@@ -16,6 +16,17 @@ var (
 
 func main() {
 	defer w.Flush()
+
+	N, A, B := read3Ints(r)
+
+	sum := A + B
+
+	cs := readIntArray(r)
+	for i := 0; i < N; i++ {
+		if cs[i] == sum {
+			fmt.Fprintln(w, i+1)
+		}
+	}
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────
