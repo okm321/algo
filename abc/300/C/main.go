@@ -16,6 +16,56 @@ var (
 
 func main() {
 	defer w.Flush()
+
+	H, W := read2Ints(r)
+
+	C := readGrid(r, H)
+
+	ok := func(i, j int) bool {
+		return 0 <= 1 && i < H && 0 <= j && j < W
+	}
+
+	test := func(i, j, d int) bool {
+		directions := []int{d, -d}
+		for _, x := range directions {
+			for _, y := range directions {
+				s := i + x
+				t := j + y
+				if !ok(s, t) || C[s][t] != "#" {
+					return false
+				}
+			}
+		}
+		return true
+	}
+
+	N := H
+	if W < H {
+		N = W
+	}
+
+	ans := make([]int, N+1)
+	for i := 0; i < H; i++ {
+		for j := 0; j < W; j++ {
+			if C[i][j] != "#" {
+				continue
+			}
+			if test(i, j, 1) {
+				d := 1
+				for test(i, j, d+1) {
+					d++
+				}
+				ans[d]++
+			}
+		}
+	}
+
+	for i := 1; i <= N; i++ {
+		fmt.Fprintln(w, ans[i])
+		if i < N {
+			fmt.Fprintln(w, " ")
+		}
+	}
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────
