@@ -14,7 +14,7 @@ abc: .check-abc-num
 	done
 	@echo "# AtCoder Beginner Contest $(ABC_NUM)" > abc/$(ABC_NUM)/README.md
 	@echo "" >> abc/$(ABC_NUM)/README.md
-	@echo "[トップペー](https://atcoder.jp/contests/abc$(ABC_NUM))" >> abc/$(ABC_NUM)/README.md
+	@echo "[トップページ](https://atcoder.jp/contests/abc$(ABC_NUM))" >> abc/$(ABC_NUM)/README.md
 	@echo "" >> abc/$(ABC_NUM)/README.md
 	@echo "## 問題" >> abc/$(ABC_NUM)/README.md
 	@echo "" >> abc/$(ABC_NUM)/README.md

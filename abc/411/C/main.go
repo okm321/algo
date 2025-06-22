@@ -17,54 +17,45 @@ var (
 func main() {
 	defer w.Flush()
 
-	H, W := read2Ints(r)
+	N, _ := read2Ints(r)
+	A := readIntArray(r)
 
-	C := readGrid(r, H)
-
-	ok := func(i, j int) bool {
-		return 0 <= i && i < H && 0 <= j && j < W
-	}
-
-	test := func(i, j, d int) bool {
-		directions := []int{d, -d}
-		for _, x := range directions {
-			for _, y := range directions {
-				s := i + x
-				t := j + y
-				if !ok(s, t) || C[s][t] != "#" {
-					return false
-				}
-			}
-		}
-		return true
-	}
-
-	N := H
-	if W < H {
-		N = W
-	}
-
-	ans := make([]int, N+1)
-	for i := 0; i < H; i++ {
-		for j := 0; j < W; j++ {
-			if C[i][j] != "#" {
-				continue
-			}
-			if test(i, j, 1) {
-				d := 1
-				for test(i, j, d+1) {
-					d++
-				}
-				ans[d]++
-			}
-		}
-	}
-
+	rowMap := make(map[int]int)
 	for i := 1; i <= N; i++ {
-		fmt.Fprintln(w, ans[i])
-		if i < N {
-			fmt.Fprintln(w, " ")
+		rowMap[i] = 0
+	}
+
+	segments := 0
+
+	for _, a := range A {
+		leftBlack := false
+		rightBlack := false
+		if rowMap[a-1] == 1 {
+			leftBlack = true
 		}
+		if rowMap[a+1] == 1 {
+			rightBlack = true
+		}
+
+		if rowMap[a] == 0 { // 白 -> 黒
+			rowMap[a] = 1
+			if leftBlack && rightBlack { // 繋がっちゃうから区間減らす
+				segments--
+			}
+			if !leftBlack && !rightBlack { // 左右が白ければ区間追加
+				segments++
+			}
+		} else { // 黒 -> 白
+			rowMap[a] = 0
+			if leftBlack && rightBlack {
+				segments++
+			}
+			if !leftBlack && !rightBlack {
+				segments--
+			}
+		}
+
+		fmt.Fprintln(w, segments)
 	}
 }
 
@@ -129,6 +120,13 @@ func readStringArray(reader *bufio.Reader) []string {
 	return strings.Fields(line)
 }
 
+// readStringSplit 文字列を指定のセパレータで分割して読み取る関数
+func readStringSplit(reader *bufio.Reader, sep string) []string {
+	line, _ := reader.ReadString('\n')
+	line = strings.TrimSpace(line)
+	return strings.Split(line, sep)
+}
+
 // ── グリッド関係のやつ ──────────────────────────────────────────────
 
 // readGrid height行の文字列グリッドを読み込む
@@ -182,4 +180,12 @@ func writeGrid(w *bufio.Writer, grid [][]string) {
 	for i := 0; i < len(grid); i++ {
 		fmt.Fprint(w, strings.Join(grid[i], ""), "\n")
 	}
+}
+
+func convertIntArrToString(arr []int) string {
+	strSlice := make([]string, len(arr))
+	for i, v := range arr {
+		strSlice[i] = strconv.Itoa(v)
+	}
+	return strings.Join(strSlice, " ")
 }

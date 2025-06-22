@@ -17,55 +17,46 @@ var (
 func main() {
 	defer w.Flush()
 
-	H, W := read2Ints(r)
+	N := readInt(r)
+	P := readIntArray(r)
 
-	C := readGrid(r, H)
+	a := make([]int, N)
+	b := make([]int, N)
 
-	ok := func(i, j int) bool {
-		return 0 <= i && i < H && 0 <= j && j < W
-	}
-
-	test := func(i, j, d int) bool {
-		directions := []int{d, -d}
-		for _, x := range directions {
-			for _, y := range directions {
-				s := i + x
-				t := j + y
-				if !ok(s, t) || C[s][t] != "#" {
-					return false
-				}
-			}
+	for i := 1; i < N-1; i++ {
+		if P[i-1] < P[i] && P[i] > P[i+1] {
+			a[i] = 1
 		}
-		return true
+		if P[i-1] > P[i] && P[i] < P[i+1] {
+			b[i] = 1
+		}
 	}
 
-	N := H
-	if W < H {
-		N = W
+	aSum := make([]int, N+1)
+	bSum := make([]int, N+1)
+
+	for i := 0; i < N; i++ {
+		aSum[i+1] = aSum[i] + a[i]
+		bSum[i+1] = bSum[i] + b[i]
 	}
 
-	ans := make([]int, N+1)
-	for i := 0; i < H; i++ {
-		for j := 0; j < W; j++ {
-			if C[i][j] != "#" {
-				continue
-			}
-			if test(i, j, 1) {
-				d := 1
-				for test(i, j, d+1) {
-					d++
-				}
-				ans[d]++
+	count := 0
+	for i := 0; i < N-3; i++ {
+		if i+1 < N && P[i] >= P[i+1] {
+			continue
+		}
+
+		for j := i + 3; j < N; j++ {
+			aCount := aSum[j] - aSum[i]
+			bCount := bSum[j] - bSum[i]
+
+			if aCount == 1 && bCount == 1 {
+				count++
 			}
 		}
 	}
 
-	for i := 1; i <= N; i++ {
-		fmt.Fprintln(w, ans[i])
-		if i < N {
-			fmt.Fprintln(w, " ")
-		}
-	}
+	fmt.Fprintln(w, count)
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────

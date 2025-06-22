@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"math/big"
 	"os"
 	"strconv"
@@ -17,55 +18,33 @@ var (
 func main() {
 	defer w.Flush()
 
-	H, W := read2Ints(r)
+	N := readInt(r)
+	A := readIntArray(r)
 
-	C := readGrid(r, H)
+	ans := []int{A[0]}
+	for i := 1; i < N; i++ {
+		z := A[i] - A[i-1]
 
-	ok := func(i, j int) bool {
-		return 0 <= i && i < H && 0 <= j && j < W
-	}
-
-	test := func(i, j, d int) bool {
-		directions := []int{d, -d}
-		for _, x := range directions {
-			for _, y := range directions {
-				s := i + x
-				t := j + y
-				if !ok(s, t) || C[s][t] != "#" {
-					return false
-				}
-			}
+		if int(math.Abs(float64(z))) == 1 {
+			ans = append(ans, A[i])
+			continue
 		}
-		return true
-	}
 
-	N := H
-	if W < H {
-		N = W
-	}
-
-	ans := make([]int, N+1)
-	for i := 0; i < H; i++ {
-		for j := 0; j < W; j++ {
-			if C[i][j] != "#" {
+		if z > 0 {
+			for j := 0; j < z; j++ {
+				ans = append(ans, ans[len(ans)-1]+1)
 				continue
 			}
-			if test(i, j, 1) {
-				d := 1
-				for test(i, j, d+1) {
-					d++
-				}
-				ans[d]++
+		}
+
+		if z < 0 {
+			for j := 0; j < -z; j++ {
+				ans = append(ans, ans[len(ans)-1]-1)
 			}
 		}
 	}
 
-	for i := 1; i <= N; i++ {
-		fmt.Fprintln(w, ans[i])
-		if i < N {
-			fmt.Fprintln(w, " ")
-		}
-	}
+	fmt.Fprintln(w, convertIntArrToString(ans))
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────
@@ -182,4 +161,12 @@ func writeGrid(w *bufio.Writer, grid [][]string) {
 	for i := 0; i < len(grid); i++ {
 		fmt.Fprint(w, strings.Join(grid[i], ""), "\n")
 	}
+}
+
+func convertIntArrToString(arr []int) string {
+	strSlice := make([]string, len(arr))
+	for i, v := range arr {
+		strSlice[i] = strconv.Itoa(v)
+	}
+	return strings.Join(strSlice, " ")
 }

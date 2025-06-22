@@ -17,54 +17,32 @@ var (
 func main() {
 	defer w.Flush()
 
-	H, W := read2Ints(r)
+	N := readInt(r)
+	S := readStringSplit(r, "")
 
-	C := readGrid(r, H)
-
-	ok := func(i, j int) bool {
-		return 0 <= i && i < H && 0 <= j && j < W
-	}
-
-	test := func(i, j, d int) bool {
-		directions := []int{d, -d}
-		for _, x := range directions {
-			for _, y := range directions {
-				s := i + x
-				t := j + y
-				if !ok(s, t) || C[s][t] != "#" {
-					return false
-				}
+	T := 0
+	A := 0
+	for _, s := range S {
+		if s == "T" {
+			T++
+			if T == N/2 {
+				fmt.Fprintln(w, "T")
+				return
 			}
 		}
-		return true
-	}
-
-	N := H
-	if W < H {
-		N = W
-	}
-
-	ans := make([]int, N+1)
-	for i := 0; i < H; i++ {
-		for j := 0; j < W; j++ {
-			if C[i][j] != "#" {
-				continue
-			}
-			if test(i, j, 1) {
-				d := 1
-				for test(i, j, d+1) {
-					d++
-				}
-				ans[d]++
+		if s == "A" {
+			A++
+			if A == N/2 {
+				fmt.Fprintln(w, "A")
+				return
 			}
 		}
 	}
 
-	for i := 1; i <= N; i++ {
-		fmt.Fprintln(w, ans[i])
-		if i < N {
-			fmt.Fprintln(w, " ")
-		}
+	if T > A {
+		fmt.Fprintln(w, "T")
+	} else {
+		fmt.Fprintln(w, "A")
 	}
 }
 
@@ -127,6 +105,13 @@ func readString(reader *bufio.Reader) string {
 func readStringArray(reader *bufio.Reader) []string {
 	line, _ := reader.ReadString('\n')
 	return strings.Fields(line)
+}
+
+// readStringSplit 文字列を指定のセパレータで分割して読み取る関数
+func readStringSplit(reader *bufio.Reader, sep string) []string {
+	line, _ := reader.ReadString('\n')
+	line = strings.TrimSpace(line)
+	return strings.Split(line, sep)
 }
 
 // ── グリッド関係のやつ ──────────────────────────────────────────────

@@ -17,55 +17,16 @@ var (
 func main() {
 	defer w.Flush()
 
-	H, W := read2Ints(r)
+	P := readString(r)
+	L := readInt(r)
 
-	C := readGrid(r, H)
+	pc := len(P)
 
-	ok := func(i, j int) bool {
-		return 0 <= i && i < H && 0 <= j && j < W
+	if pc >= L {
+		fmt.Fprintln(w, "Yes")
+		return
 	}
-
-	test := func(i, j, d int) bool {
-		directions := []int{d, -d}
-		for _, x := range directions {
-			for _, y := range directions {
-				s := i + x
-				t := j + y
-				if !ok(s, t) || C[s][t] != "#" {
-					return false
-				}
-			}
-		}
-		return true
-	}
-
-	N := H
-	if W < H {
-		N = W
-	}
-
-	ans := make([]int, N+1)
-	for i := 0; i < H; i++ {
-		for j := 0; j < W; j++ {
-			if C[i][j] != "#" {
-				continue
-			}
-			if test(i, j, 1) {
-				d := 1
-				for test(i, j, d+1) {
-					d++
-				}
-				ans[d]++
-			}
-		}
-	}
-
-	for i := 1; i <= N; i++ {
-		fmt.Fprintln(w, ans[i])
-		if i < N {
-			fmt.Fprintln(w, " ")
-		}
-	}
+	fmt.Fprintln(w, "No")
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────
@@ -129,6 +90,13 @@ func readStringArray(reader *bufio.Reader) []string {
 	return strings.Fields(line)
 }
 
+// readStringSplit 文字列を指定のセパレータで分割して読み取る関数
+func readStringSplit(reader *bufio.Reader, sep string) []string {
+	line, _ := reader.ReadString('\n')
+	line = strings.TrimSpace(line)
+	return strings.Split(line, sep)
+}
+
 // ── グリッド関係のやつ ──────────────────────────────────────────────
 
 // readGrid height行の文字列グリッドを読み込む
@@ -182,4 +150,12 @@ func writeGrid(w *bufio.Writer, grid [][]string) {
 	for i := 0; i < len(grid); i++ {
 		fmt.Fprint(w, strings.Join(grid[i], ""), "\n")
 	}
+}
+
+func convertIntArrToString(arr []int) string {
+	strSlice := make([]string, len(arr))
+	for i, v := range arr {
+		strSlice[i] = strconv.Itoa(v)
+	}
+	return strings.Join(strSlice, " ")
 }
