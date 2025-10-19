@@ -16,8 +16,29 @@ var (
 
 func main() {
 	defer w.Flush()
+	N := readInt(r)
 
-	N, M := read2Ints(r)
+	S := make([]string, N)
+	for i := 0; i < N; i++ {
+		S[i] = readString(r)
+	}
+
+	list := make(map[string]struct{})
+	for i := 0; i < len(S); i++ {
+		baseText := S[i]
+		for j := 0; j < len(S); j++ {
+			if S[i] == S[j] {
+				continue
+			}
+			text := baseText + S[j]
+			if _, ok := list[text]; ok {
+				continue
+			}
+			list[text] = struct{}{}
+		}
+	}
+
+	fmt.Fprintln(w, len(list))
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────

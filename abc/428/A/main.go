@@ -17,7 +17,22 @@ var (
 func main() {
 	defer w.Flush()
 
-	N, M := read2Ints(r)
+	S, A, B, X := read4Ints(r)
+
+	cycleCount := X / (A + B)
+
+	result := cycleCount * S * A
+
+	remainder := X % (A + B)
+	if remainder > 0 {
+		if remainder <= A {
+			result += S * remainder
+		} else {
+			result += S * A
+		}
+	}
+
+	fmt.Fprintln(w, result)
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────
@@ -46,13 +61,14 @@ func read2Ints(r *bufio.Reader) (int, int) {
 }
 
 // read3Ints 一行に3つの整数のみの入力を読み込む
-func read3Ints(r *bufio.Reader) (int, int, int) {
+func read4Ints(r *bufio.Reader) (int, int, int, int) {
 	input, _ := r.ReadString('\n')
 	strs := strings.Fields(input)
 	i1, _ := strconv.Atoi(strs[0])
 	i2, _ := strconv.Atoi(strs[1])
 	i3, _ := strconv.Atoi(strs[2])
-	return i1, i2, i3
+	i4, _ := strconv.Atoi(strs[3])
+	return i1, i2, i3, i4
 }
 
 // readIntArray 整数の配列をよもとる関数

@@ -17,7 +17,17 @@ var (
 func main() {
 	defer w.Flush()
 
-	N, M := read2Ints(r)
+	N, L, R := read3Ints(r)
+
+	res := 0
+	for i := 0; i < N; i++ {
+		X, Y := read2Ints(r)
+		if X <= L && Y >= R {
+			res++
+		}
+	}
+
+	fmt.Fprintln(w, res)
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────

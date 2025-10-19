@@ -17,7 +17,20 @@ var (
 func main() {
 	defer w.Flush()
 
-	N, M := read2Ints(r)
+	N := readInt(r)
+	res := ""
+	for i := 0; i < N; i++ {
+		cl := readStringArray(r)
+		l, _ := strconv.Atoi(cl[1])
+		if len(res)+l > 100 {
+			res = "Too Long"
+			break
+		} else {
+			res += strings.Repeat(cl[0], l)
+		}
+	}
+
+	fmt.Fprintln(w, res)
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────

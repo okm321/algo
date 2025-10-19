@@ -14,10 +14,48 @@ var (
 	w = bufio.NewWriter(os.Stdout)
 )
 
+type Pair struct {
+	value int
+	count int
+}
+
 func main() {
 	defer w.Flush()
 
-	N, M := read2Ints(r)
+	Q := readInt(r)
+
+	blocks := make([]Pair, 0)
+	for i := 0; i < Q; i++ {
+		query := readIntArray(r)
+		if query[0] == 1 {
+			if len(blocks) > 0 && blocks[len(blocks)-1].value == query[2] {
+				blocks[len(blocks)-1].count += query[1]
+			} else {
+				blocks = append(blocks, Pair{value: query[2], count: query[1]})
+			}
+		}
+
+		if query[0] == 2 {
+			k := query[1]
+			sum := 0
+			idx := 0
+
+			for k > 0 && idx < len(blocks) {
+				if blocks[idx].count <= k {
+					sum += blocks[idx].value * blocks[idx].count
+					k -= blocks[idx].count
+					idx++
+				} else {
+					sum += blocks[idx].value * k
+					blocks[idx].count -= k
+					k = 0
+				}
+			}
+
+			blocks = blocks[idx:]
+			fmt.Fprintf(w, "%d\n", sum)
+		}
+	}
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────

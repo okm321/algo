@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -17,7 +18,38 @@ var (
 func main() {
 	defer w.Flush()
 
-	N, M := read2Ints(r)
+	N, K := read2Ints(r)
+	S := readString(r)
+
+	sMap := make(map[string]int)
+	maxCount := 0
+	for i := 0; i < N; i++ {
+		if i+K > len(S) {
+			break
+		}
+		word := S[i : i+K]
+		sMap[word]++
+
+		if maxCount < sMap[word] {
+			maxCount = sMap[word]
+		}
+	}
+
+	var ret []string
+	for k, v := range sMap {
+		if v != maxCount {
+			continue
+		}
+
+		ret = append(ret, k)
+	}
+
+	sort.Slice(ret, func(i, j int) bool {
+		return ret[i] < ret[j]
+	})
+
+	fmt.Fprintln(w, maxCount)
+	fmt.Fprintln(w, strings.Join(ret, " "))
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────

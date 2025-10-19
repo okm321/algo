@@ -16,8 +16,19 @@ var (
 
 func main() {
 	defer w.Flush()
+	_, M := read2Ints(r)
 
-	N, M := read2Ints(r)
+	A := readIntArray(r)
+	count := 0
+	for _, a := range A {
+		count += a
+		if count > M {
+			fmt.Fprint(w, "No")
+			return
+		}
+	}
+
+	fmt.Fprintf(w, "Yes")
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────

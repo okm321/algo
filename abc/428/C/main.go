@@ -17,7 +17,58 @@ var (
 func main() {
 	defer w.Flush()
 
-	N, M := read2Ints(r)
+	Q := readInt(r)
+
+	var lastCs []string
+	balance := 0
+	flag := true
+	negativePos := -1
+
+	for i := 1; i <= Q; i++ {
+		q := readStringArray(r)
+		query, _ := strconv.Atoi(q[0])
+
+		if query == 1 {
+			c := q[1]
+			lastCs = append(lastCs, c)
+
+			if c == "(" {
+				balance++
+			} else {
+				balance--
+				if flag && balance < 0 {
+					flag = false
+					negativePos = len(lastCs) - 1
+				}
+			}
+		}
+
+		if query == 2 {
+			lastC := lastCs[len(lastCs)-1]
+
+			if lastC == "(" {
+				balance--
+			} else {
+				balance++
+				if !flag && negativePos == len(lastCs)-1 {
+					flag = true
+					negativePos = -1
+				}
+			}
+
+			lastCs = lastCs[:len(lastCs)-1]
+		}
+
+		if len(lastCs)%2 != 0 {
+			fmt.Fprintln(w, "No")
+		} else if len(lastCs) == 0 {
+			fmt.Fprintln(w, "Yes")
+		} else if balance == 0 && flag {
+			fmt.Fprintln(w, "Yes")
+		} else {
+			fmt.Fprintln(w, "No")
+		}
+	}
 }
 
 // ── 数値読み取り ────────────────────────────────────────────────────
